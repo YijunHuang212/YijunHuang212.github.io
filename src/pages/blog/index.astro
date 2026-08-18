@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getAllPosts } from '../../lib/posts';
+
+const posts = await getAllPosts();
+---
+
+<BaseLayout title="文章" description="全部文章列表">
+  <section class="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+    <header class="mb-10">
+      <h1 class="text-3xl font-bold sm:text-4xl">全部文章</h1>
+      <p class="mt-2 text-gray-600 dark:text-gray-400">共 {posts.length} 篇</p>
+    </header>
+    {
+      posts.length > 0 ? (
+        <div class="space-y-6">
+          {posts.map((post) => <PostCard post={post} />)}
+        </div>
+      ) : (
+        <p class="text-gray-500">还没有文章，敬请期待。</p>
+      )
+    }
+  </section>
+</BaseLayout>

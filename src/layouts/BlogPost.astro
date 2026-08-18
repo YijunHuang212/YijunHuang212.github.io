@@ -1,0 +1,45 @@
+---
+import type { Post } from '../lib/posts';
+import { render } from 'astro:content';
+import TagBadge from '../components/TagBadge.astro';
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const fmt = new Intl.DateTimeFormat('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<article class="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+  <header class="mb-10">
+    <h1 class="text-3xl font-bold sm:text-4xl">{post.data.title}</h1>
+    <div class="mt-4 flex flex-wrap items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
+      <time datetime={post.data.pubDate.toISOString()}>{fmt.format(post.data.pubDate)}</time>
+      {
+        post.data.updatedDate && (
+          <span class="text-xs text-gray-400 dark:text-gray-500">
+            更新于 {fmt.format(post.data.updatedDate)}
+          </span>
+        )
+      }
+    </div>
+    {
+      post.data.tags.length > 0 && (
+        <div class="mt-4 flex flex-wrap gap-2">
+          {post.data.tags.map((tag) => <TagBadge tag={tag} />)}
+        </div>
+      )
+    }
+  </header>
+
+  <div class="post-content">
+    <Content />
+  </div>
+</article>

@@ -1,0 +1,116 @@
+---
+interface Props {
+  /** 门面插画路径（public/ 下） */
+  image: string;
+  /** 底部提示文字 */
+  hint?: string;
+}
+
+const { image, hint = '点击进入' } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const imageUrl = image.startsWith('http') ? image : `${base}${image.replace(/^\//, '')}`;
+---
+
+<div id="splash" class="splash" role="button" tabindex="0" aria-label="点击进入博客">
+  <img src={imageUrl} alt="羊毛毡风格的小王子在给玫瑰浇水" class="splash__img" />
+  <div class="splash__hint">
+    <span>{hint}</span>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 5v14" />
+      <path d="m19 12-7 7-7-7" />
+    </svg>
+  </div>
+</div>
+
+<script>
+  const SPLASH_KEY = 'felt-splash-seen';
+  const splash = document.getElementById('splash');
+
+  function leave() {
+    if (!splash || splash.classList.contains('splash--leaving')) return;
+    splash.classList.add('splash--leaving');
+    // 上拉淡出过渡结束后移除 DOM
+    setTimeout(() => splash.remove(), 700);
+  }
+
+  function markSeenAndLeave() {
+    try {
+      sessionStorage.setItem(SPLASH_KEY, '1');
+    } catch {
+      /* ignore */
+    }
+    leave();
+  }
+
+  // 同一会话（标签页）已点过 → 直接跳过门面，避免刷新后又弹出来
+  if (sessionStorage.getItem(SPLASH_KEY)) {
+    splash?.remove();
+  } else {
+    splash?.addEventListener('click', markSeenAndLeave);
+    // 键盘可访问（回车 / 空格）
+    splash?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        markSeenAndLeave();
+      }
+    });
+  }
+</script>
+
+<style is:global>
+  .splash {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    cursor: pointer;
+    background: #fdf3e7;
+    transition:
+      transform 0.65s ease-in-out,
+      opacity 0.65s ease-in-out;
+  }
+  .splash__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .splash__hint {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 8%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: #fff;
+    text-shadow: 0 1px 4px rgb(0 0 0 / 0.4);
+    animation: hint-bob 1.6s ease-in-out infinite;
+  }
+  /* 上拉 + 淡出 */
+  .splash--leaving {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+
+  @keyframes hint-bob {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(4px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .splash {
+      transition-duration: 0.01s;
+    }
+    .splash__hint {
+      animation: none;
+    }
+  }
+</style>

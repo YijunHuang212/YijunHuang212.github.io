@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PostCard from '../../../components/PostCard.astro';
+import { getAllCategories, getPostsByCategory } from '../../../lib/categories';
+
+export async function getStaticPaths() {
+  const categories = await getAllCategories();
+  return categories.map(({ category }) => ({
+    params: { category },
+    props: { category },
+  }));
+}
+
+const { category } = Astro.props;
+const posts = await getPostsByCategory(category);
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout title={`合集：${category}`} description={`${category} 分类下的全部文章`}>
+  <section class="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+    <header class="mb-10">
+      <h1 class="text-3xl font-bold sm:text-4xl">{category}</h1>
+      <p class="mt-2 text-gray-600 dark:text-gray-400">共 {posts.length} 篇文章</p>
+    </header>
+
+    <div class="space-y-6">
+      {posts.map((post) => <PostCard post={post} />)}
+    </div>
+
+    <div class="mt-12 text-center">
+      <a href={base} class="text-sm text-blue-600 hover:underline dark:text-blue-400">
+        ← 返回首页
+      </a>
+    </div>
+  </section>
+</BaseLayout>

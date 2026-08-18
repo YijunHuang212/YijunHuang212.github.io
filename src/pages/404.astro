@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout title="页面未找到" description="你访问的页面不存在。">
+  <section
+    class="mx-auto flex max-w-3xl flex-col items-center px-4 py-24 text-center sm:px-6"
+  >
+    <p class="text-7xl font-black tracking-tight text-gray-200 dark:text-gray-800">404</p>
+    <h1 class="mt-4 text-2xl font-bold">页面走丢了 🧶</h1>
+    <p class="mt-3 max-w-md text-gray-600 dark:text-gray-400">
+      你要找的内容不存在或已被移动。回首页逛逛，也许能发现有趣的文章。
+    </p>
+    <a
+      href={base}
+      class="mt-8 inline-block rounded-lg bg-gray-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-gray-700 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
+    >
+      返回首页
+    </a>
+  </section>
+</BaseLayout>

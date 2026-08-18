@@ -1,0 +1,48 @@
+# 部署到 GitHub Pages 的工作流
+# 参考官方文档：https://docs.astro.build/en/guides/deploy/github/
+name: Deploy to GitHub Pages
+
+on:
+  # 每次推送到 main 分支时触发（如分支不叫 main，请改成你的分支名）
+  push:
+    branches: [main]
+  # 允许在 Actions 面板手动触发
+  workflow_dispatch:
+
+# 允许本任务克隆仓库并创建 Pages 部署
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同一时间只允许一个部署在跑；跳过快照已过期的排队任务
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout your repository using git
+        uses: actions/checkout@v7
+      - name: Install, build, and upload your site
+        uses: withastro/action@v6
+        env:
+          # 从 GitHub Actions 变量注入构建配置：
+          # 在仓库 Settings → Secrets and variables → Actions → Variables 中设置
+          PUBLIC_SITE: ${{ vars.PUBLIC_SITE }}
+          PUBLIC_BASE: ${{ vars.PUBLIC_BASE }}
+        # with:
+        #   node-version: 24 # 指定构建用的 Node 版本（默认 24）
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

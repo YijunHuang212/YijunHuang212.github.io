@@ -1,0 +1,81 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  /** 页面标题；留空则只用站点名 */
+  title?: string;
+  description?: string;
+  canonicalURL?: URL;
+  ogImage?: URL;
+}
+
+const { title, description, canonicalURL, ogImage } = Astro.props;
+
+const siteTitle = '我的博客';
+const siteDescription = '一个用 Astro 构建的个人博客，记录前端学习与实践。';
+
+const pageTitle = title ? `${title} · ${siteTitle}` : siteTitle;
+const pageDescription = description ?? siteDescription;
+
+// Astro.site 在构建时一定有值（config 中已设默认 site），此处仅为类型安全兜底
+const site = Astro.site ?? new URL('/', 'https://your-username.github.io');
+const canonical = canonicalURL ?? site;
+---
+
+<!doctype html>
+<html lang="zh-CN" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- 用 BASE_URL 拼接，保证 GitHub Pages 项目站点（base 路径）下 favicon 也能正确加载 -->
+    <link rel="icon" type="image/svg+xml" href={import.meta.env.BASE_URL + 'favicon.svg'} />
+    <link rel="icon" href={import.meta.env.BASE_URL + 'favicon.ico'} />
+
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <link rel="canonical" href={canonical} />
+    <!-- RSS 自动发现（浏览器/阅读器据此订阅） -->
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={siteTitle}
+      href={import.meta.env.BASE_URL + 'rss.xml'}
+    />
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- 主题初始化：必须在首帧渲染前执行，避免暗色模式闪烁（FOUC） -->
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (stored === 'dark' || (!stored && prefersDark)) {
+            document.documentElement.classList.add('dark');
+          }
+        } catch (e) {
+          /* localStorage 不可用（如隐私模式）时静默降级为亮色 */
+        }
+      })();
+    </script>
+  </head>
+  <body
+    class="bg-white text-gray-900 antialiased transition-colors dark:bg-gray-950 dark:text-gray-100"
+  >
+    <Header />
+    <main class="min-h-screen">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
