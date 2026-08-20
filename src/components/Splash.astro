@@ -6,19 +6,36 @@ interface Props {
   hint?: string;
 }
 
-const { image, hint = '点击进入' } = Astro.props;
+const { image, hint = 'Enter My Planet' } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const imageUrl = image.startsWith('http') ? image : `${base}${image.replace(/^\//, '')}`;
 ---
 
 <div id="splash" class="splash" role="button" tabindex="0" aria-label="点击进入博客">
   <img src={imageUrl} alt="羊毛毡风格的小王子在给玫瑰浇水" class="splash__img" />
+  <!-- 书名标题：置于右侧天空，横向排版，纵向居中偏上 -->
+  <header class="splash__title">
+    <h1 class="splash__title-main">HYJ's Blog</h1>
+  </header>
+  <!-- 左侧夜空竖排 tagline：两列英文 + 右侧中文书法 -->
+  <p class="splash__tagline">
+    <span class="splash__tagline-line">「True riches are found in</span>
+    <span class="splash__tagline-line">the simplest things.」</span>
+    <span class="splash__tagline-zh">真正的财富蕴藏在最简单的事物中。</span>
+  </p>
   <div class="splash__hint">
-    <span>{hint}</span>
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M12 5v14" />
-      <path d="m19 12-7 7-7-7" />
-    </svg>
+    <span class="splash__hint-pill">
+      <!-- 星球图标（左侧） -->
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.5" />
+        <ellipse cx="12" cy="12" rx="9.5" ry="3" transform="rotate(-18 12 12)" />
+      </svg>
+      <span>{hint}</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 5v14" />
+        <path d="m19 12-7 7-7-7" />
+      </svg>
+    </span>
   </div>
 </div>
 
@@ -75,6 +92,60 @@ const imageUrl = image.startsWith('http') ? image : `${base}${image.replace(/^\/
     object-fit: cover;
     opacity: 0.5;
   }
+  /* 书名标题：右侧天空，横向排版，纵向居中偏上 */
+  .splash__title {
+    position: absolute;
+    right: 8%;
+    top: 40%;
+    transform: translateY(-50%);
+    z-index: 1;
+    animation: title-in 0.9s ease-out both;
+  }
+  .splash__title-main {
+    margin: 0;
+    font-family: Georgia, 'Songti SC', 'Times New Roman', serif;
+    font-size: clamp(48px, 7.8vmin, 96px);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: 0.18em;
+    color: #f7f1e2;
+    text-shadow:
+      0 2px 6px rgb(0 0 0 / 0.45),
+      0 6px 18px rgb(0 0 0 / 0.3);
+  }
+  /* 左侧夜空竖排 tagline：两列竖排（容器普通横排 flex，每列 span 竖排），两端「」 */
+  .splash__tagline {
+    position: absolute;
+    left: 6%;
+    top: 10%;
+    margin: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 10px;
+    font-family: Georgia, 'Songti SC', 'Times New Roman', serif;
+    font-size: clamp(22px, 3.2vmin, 30px);
+    color: #ebd9af;
+    text-shadow: 0 1px 3px rgb(0 0 0 / 0.45);
+    animation: tagline-in 1.2s ease-out 0.3s both;
+  }
+  .splash__tagline-line {
+    writing-mode: vertical-lr;
+    line-height: 1.3;
+    letter-spacing: 0.25em;
+    white-space: nowrap;
+  }
+  /* 右侧中文竖排书法：汉字正立、从上往下写 */
+  .splash__tagline-zh {
+    margin-left: 28px;
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    line-height: 1.35;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+    font-family: '楷体', 'KaiTi', 'STKaiti', 'Kaiti SC', 'Songti SC', 'SimSun', serif;
+  }
   .splash__hint {
     position: absolute;
     left: 0;
@@ -83,12 +154,25 @@ const imageUrl = image.startsWith('http') ? image : `${base}${image.replace(/^\/
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    font-size: 14px;
-    letter-spacing: 2px;
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: 1px;
     color: #fff;
-    text-shadow: 0 1px 4px rgb(0 0 0 / 0.4);
+    text-shadow: 0 1px 3px rgb(0 0 0 / 0.5);
     animation: hint-bob 1.6s ease-in-out infinite;
+  }
+  /* 更醒目的胶囊提示：半透明底 + 毛玻璃 + 星球图标 */
+  .splash__hint-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 24px;
+    border-radius: 999px;
+    background: rgb(15 23 42 / 0.55);
+    border: 1px solid rgb(255 255 255 / 0.35);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 6px 22px rgb(0 0 0 / 0.3);
   }
   /* 上拉 + 淡出 */
   .splash--leaving {
@@ -106,11 +190,37 @@ const imageUrl = image.startsWith('http') ? image : `${base}${image.replace(/^\/
     }
   }
 
+  @keyframes title-in {
+    from {
+      opacity: 0;
+      transform: translateY(calc(-50% + 8px));
+    }
+    to {
+      opacity: 1;
+      transform: translateY(-50%);
+    }
+  }
+
+  @keyframes tagline-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .splash {
       transition-duration: 0.01s;
     }
     .splash__hint {
+      animation: none;
+    }
+    .splash__title {
+      animation: none;
+    }
+    .splash__tagline {
       animation: none;
     }
   }
