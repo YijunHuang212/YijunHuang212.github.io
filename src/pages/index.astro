@@ -99,16 +99,12 @@ const base = import.meta.env.BASE_URL;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 14rem;
     width: 100vw;
     margin-top: -4rem;
     margin-left: calc(50% - 50vw);
     margin-right: calc(50% - 50vw);
-  }
-  @media (min-width: 640px) {
-    .hero-banner {
-      height: 17rem;
-    }
+    /* 高度跟随海报本身比例（poster.jpg = 1054x486 ≈ 2.17:1），整幅完整显示、不裁切 */
+    aspect-ratio: 1054 / 486;
   }
   /* 半透明遮罩：保证文字可读性 */
   .hero-banner::after {
