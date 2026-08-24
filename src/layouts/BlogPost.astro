@@ -2,6 +2,7 @@
 import type { Post } from '../lib/posts';
 import { render } from 'astro:content';
 import TagBadge from '../components/TagBadge.astro';
+import Comments from '../components/Comments.astro';
 
 interface Props {
   post: Post;
@@ -43,3 +44,10 @@ const fmt = new Intl.DateTimeFormat('zh-CN', {
     <Content />
   </div>
 </article>
+
+<Comments
+  repo="YijunHuang212/giscus-blog"
+  repoId="R_kgDOUCunxg"
+  category="Announcements"
+  categoryId="DIC_kwDOUCunxs4DEFg4"
+/>
