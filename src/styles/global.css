@@ -28,8 +28,10 @@ html {
   .post-content h3 {
     @apply mt-6 mb-3 text-xl font-semibold text-gray-900 dark:text-gray-100;
   }
-  .post-content p {
+  /* 首行缩进两字符（仅正文顶层段落，引用块/列表内段落不受影响） */
+  .post-content > p {
     @apply my-4;
+    text-indent: 2em;
   }
   .post-content a {
     @apply text-blue-600 underline underline-offset-2 hover:text-blue-500 dark:text-blue-400;
