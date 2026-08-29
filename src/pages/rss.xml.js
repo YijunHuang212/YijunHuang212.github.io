@@ -18,7 +18,7 @@ export async function GET(context) {
 
   return rss({
     title: '我的博客',
-    description: '一个用 Astro 构建的个人博客，记录前端学习与实践。',
+    description: '一个用 Astro 构建的个人博客，记录学习生活和思考。',
     site: siteWithBase,
     items: posts.map((post) => ({
       title: post.data.title,
